@@ -53,7 +53,14 @@ let gameBoard = (()=>{
             _gameOver = true
         }
     }
-    return{select, getChar, isGameOver}
+    const reset = ()=>{
+        _gameOver = false
+        _currPlayer = 0
+        for(let i = 0; i < _state.length; i++){
+            _state[i] = new Array(3).fill(0)
+        }
+    }
+    return{select, getChar, isGameOver, reset}
 })()
 let cells = []
 const cellFactory = (element)=> {
@@ -72,9 +79,24 @@ const cellFactory = (element)=> {
             _playable = false
         }
     })
-    return {getCellNum,isPlayable, getElement}
+    this.reset = ()=>{
+        _element.textContent = ''
+        _playable = true
+    }
+    return {getCellNum,isPlayable, getElement, reset}
 }
 document.querySelectorAll(".cell").forEach(cellElmt=>{
     cell = cellFactory(cellElmt)
     cells[cell.getCellNum()] = cell
 })
+// function fnreset(){
+//     console.log("called");
+//     cells.forEach(cell=>cell.reset())
+//     gameboard.reset()
+// }
+
+let resetButton = document.querySelector(".reset")
+resetButton.onclick = ()=>{
+    gameBoard.reset()
+    cells.forEach(cell=>cell.reset())
+};
