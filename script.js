@@ -52,6 +52,11 @@ let gameBoard = (()=>{
             console.log(_winner);
             _gameOver = true
         }
+        if(_gameOver){
+            cells.forEach(cell=>{
+                cell.gameOver()
+            })
+        }
     }
     const reset = ()=>{
         _gameOver = false
@@ -77,23 +82,24 @@ const cellFactory = (element)=> {
             _element.textContent = gameBoard.getChar()
             gameBoard.select(_number)
             _playable = false
+            _element.classList.remove('playable');
         }
     })
     this.reset = ()=>{
         _element.textContent = ''
         _playable = true
+        _element.classList.add('playable');
     }
-    return {getCellNum,isPlayable, getElement, reset}
+    this.gameOver = ()=>{
+        _playable = false
+        _element.classList.remove('playable');
+    }
+    return {getCellNum,isPlayable, getElement, reset, gameOver}
 }
 document.querySelectorAll(".cell").forEach(cellElmt=>{
     cell = cellFactory(cellElmt)
     cells[cell.getCellNum()] = cell
 })
-// function fnreset(){
-//     console.log("called");
-//     cells.forEach(cell=>cell.reset())
-//     gameboard.reset()
-// }
 
 let resetButton = document.querySelector(".reset")
 resetButton.onclick = ()=>{
