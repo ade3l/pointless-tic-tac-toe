@@ -1,3 +1,120 @@
+const grid_side = 3
+const PLAYER_X = 1
+const PLAYER_Y = -1
+const agent = (()=>{
+    const pickMove = (states,player)=>{
+        // console.log("start "+ states);
+        let bestMove
+        if(player == PLAYER_X){
+            let bestScore = -Infinity
+            for(let i=0;i<grid_side;i++){
+                for(j=0;j<grid_side;j++){
+                    if(states[i][j] == 0){
+                        states[i][j] = 1
+                        score = minimax(states, 0,false)
+                        states[i][j] = 0
+                        if(score>bestScore){
+                            bestScore = score
+                            a = " "+i
+                            b = " "+ j
+                            bestMove = {a,b} 
+                        }
+                    }
+                }
+            }
+        }
+        else{
+            let bestScore = Infinity
+            for(let i=0;i<grid_side;i++){
+                for(let j=0;j<grid_side;j++){
+                    if(states[i][j]==0){
+                        states[i][j] = -1
+                        score = minimax(states,0,true)
+                        states[i][j] = 0
+                        if(score<bestScore){
+                            bestScore = score
+                            a = " "+i
+                            b = " "+ j
+                            bestMove = {a,b} 
+                        }
+                    }
+                }
+            }
+        }
+        console.log(bestMove);
+        return bestMove
+        
+    }
+    const minimax = (states,depth, isMaximising) =>{
+        // console.log(""+states);
+        result = checkWinner(states)
+        if(result!=null){
+            if(result == PLAYER_X)  
+                return 100-depth
+            else if(result == PLAYER_Y)
+                return -100+depth
+            else return 0
+        }
+        let bestScore;
+        if(isMaximising){
+            bestScore = -Infinity
+            for(let i =0;i<grid_side;i++){
+                for(let j =0; j<grid_side;j++){
+                    if(states[i][j]==0){
+                        states[i][j] = 1;
+                        score = minimax(states, depth+1,false)
+                        states[i][j] = 0
+                        bestScore = Math.max(score,bestScore)
+                    }
+                }
+            }
+        }
+        else{
+            bestScore = Infinity
+            for(let i =0 ; i<grid_side; i++){
+                for(let j = 0; j<grid_side; j++){
+                    if(states[i][j]==0){
+                        states[i][j] = -1;
+                        score = minimax(states,depth+1,true)
+                        states[i][j] = 0
+                        bestScore= Math.min(score,bestScore)
+                    }
+                }
+            }
+        }
+        return bestScore
+
+    }
+    const checkWinner = (states)=>{
+        // check rows
+        for(let i=0;i<grid_side;i++){
+            if(states[i][0] == states[i][1] && states[i][1] == states[i][2] && states[i][0]!=0){
+                return states[i][0]
+            }
+            if(states[0][i] == states[1][i] && states[1][i] == states[2][i] && states[0][i]!=0){
+                return states[0][i]
+            }
+        }
+        if(states[0][0] == states[1][1] && states[1][1] == states[2][2] && states[0][0]!=0){
+            return states[0][0]
+        }
+        if(states[0][2] == states[1][1] && states[1][1] == states[2][0] && states[0][2]!=0){
+            return states[0][2]
+        }
+        //check if there is a tie
+        let isTie = true
+        for(let i=0;i<grid_side;i++){
+            for(let j=0;j<grid_side;j++){
+                if(states[i][j]==0){
+                    isTie = false
+                }
+            }
+        }
+        if(isTie){ return "tie"}
+        return null
+    }
+    return {pickMove}
+})()
 let gameBoard = (()=>{
     let _winner
     let _gameOver  = false
@@ -5,22 +122,22 @@ let gameBoard = (()=>{
     for(let i = 0; i < _state.length; i++){
         _state[i] = new Array(3).fill(0)
     }
-    let _currPlayer = 0
+    let _currPlayer = PLAYER_X
     const isGameOver = ()=> _gameOver
     const select = (num)=>{
         // console.log(num);
-        if(_currPlayer==0){
+        if(_currPlayer==PLAYER_X){
             _state[Math.floor(num/3)][num%3] = 1
-            _currPlayer = 1
+            _currPlayer = PLAYER_Y
         }
         else{
             _state[Math.floor(num/3)][num%3] = -1
-            _currPlayer = 0
+            _currPlayer = PLAYER_X
         }
         validateBoard()
     }
     const getChar = ()=>{
-        if(_currPlayer==0) return 'X'
+        if(_currPlayer==PLAYER_X) return 'X'
         else return 'O'
     }
 
@@ -28,7 +145,7 @@ let gameBoard = (()=>{
         //check rows
         for(let i = 0; i < _state.length; i++){
             if(_state[i][0] == _state[i][1] && _state[i][1] == _state[i][2] && _state[i][0] != 0){
-                _winner = _state[i][0]==1?0:1
+                _winner = _state[i][0]==1?PLAYER_X:PLAYER_Y
                 console.log(_winner);
                 _gameOver = true
             }
@@ -36,19 +153,19 @@ let gameBoard = (()=>{
         //check columns
         for(let i = 0; i < _state.length; i++){
             if(_state[0][i] == _state[1][i] && _state[1][i] == _state[2][i] && _state[0][i] != 0){
-                _winner = _state[0][i]==1?0:1
+                _winner = _state[0][i]==1?PLAYER_X:PLAYER_Y
                 console.log(_winner);
                 _gameOver = true
             }
         }
         //check diagonals
         if(_state[0][0] == _state[1][1] && _state[1][1] == _state[2][2] && _state[0][0] != 0){
-            _winner = _state[0][0]==1?0:1
+            _winner = _state[0][0]==1?PLAYER_X:PLAYER_Y
             console.log(_winner);
             _gameOver = true
         }
         if(_state[0][2] == _state[1][1] && _state[1][1] == _state[2][0] && _state[0][2] != 0){
-            _winner = _state[0][2]==1?0:1
+            _winner = _state[0][2]==1?PLAYER_X:PLAYER_Y
             console.log(_winner);
             _gameOver = true
         }
@@ -60,7 +177,7 @@ let gameBoard = (()=>{
     }
     const reset = ()=>{
         _gameOver = false
-        _currPlayer = 0
+        _currPlayer = PLAYER_X
         for(let i = 0; i < _state.length; i++){
             _state[i] = new Array(3).fill(0)
         }
@@ -106,3 +223,5 @@ resetButton.onclick = ()=>{
     gameBoard.reset()
     cells.forEach(cell=>cell.reset())
 };
+
+agent.pickMove([[1,1,-1],[0,1,0],[-1,-1,0]],PLAYER_X)
