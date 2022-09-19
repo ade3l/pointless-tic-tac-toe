@@ -1,9 +1,31 @@
 const grid_side = 3
 const PLAYER_X = 1
 const PLAYER_Y = -1
+var X_human = false
+var Y_human = false
+const player_controller = (()=>{
+    const notify =(player,states)=>{
+        if(player==PLAYER_X){
+            if(!X_human){
+                let move = agent.pickMove(states, PLAYER_X)
+                let pos = move['i']*3+move['j']
+                cells[pos].select()
+                gameBoard.select(pos)
+            }
+        }
+        else{
+            if(!Y_human){
+                let move = agent.pickMove(states,player)
+                let pos = move['i']*3+move['j']
+                cells[pos].select()
+                gameBoard.select(pos)
+            }
+        }
+    }
+    return {notify}
+})()
 const agent = (()=>{
     const pickMove = (states,player)=>{
-        // console.log("start "+ states);
         let bestMove
         if(player == PLAYER_X){
             let bestScore = -Infinity
@@ -17,7 +39,7 @@ const agent = (()=>{
                             bestScore = score
                             a = " "+i
                             b = " "+ j
-                            bestMove = {a,b} 
+                            bestMove = {i,j} 
                         }
                     }
                 }
@@ -33,15 +55,12 @@ const agent = (()=>{
                         states[i][j] = 0
                         if(score<bestScore){
                             bestScore = score
-                            a = " "+i
-                            b = " "+ j
-                            bestMove = {a,b} 
+                            bestMove = {i,j} 
                         }
                     }
                 }
             }
         }
-        console.log(bestMove);
         return bestMove
         
     }
@@ -135,6 +154,9 @@ let gameBoard = (()=>{
             _currPlayer = PLAYER_X
         }
         validateBoard()
+        if(!_gameOver)
+            player_controller.notify(_currPlayer,_state)
+
     }
     const getChar = ()=>{
         if(_currPlayer==PLAYER_X) return 'X'
@@ -169,6 +191,19 @@ let gameBoard = (()=>{
             console.log(_winner);
             _gameOver = true
         }
+        //check draw
+        let isTie = true
+        for(let i=0;i<grid_side;i++){
+            for(let j=0;j<grid_side;j++){
+                if(_state[i][j]==0){
+                    isTie = false
+                }
+            }
+        }
+        if(isTie){
+            _winner = "tie"
+            _gameOver = true
+        }
         if(_gameOver){
             cells.forEach(cell=>{
                 cell.gameOver()
@@ -197,11 +232,17 @@ const cellFactory = (element)=> {
         // console.log(_number);
         if(_playable && !gameBoard.isGameOver()){
             _element.textContent = gameBoard.getChar()
-            gameBoard.select(_number)
             _playable = false
             _element.classList.remove('playable');
+            
+            gameBoard.select(_number)
         }
     })
+    this.select = ()=>{
+        _element.textContent = gameBoard.getChar()
+        _playable = false
+        _element.classList.remove('playable');
+    }
     this.reset = ()=>{
         _element.textContent = ''
         _playable = true
@@ -211,7 +252,7 @@ const cellFactory = (element)=> {
         _playable = false
         _element.classList.remove('playable');
     }
-    return {getCellNum,isPlayable, getElement, reset, gameOver}
+    return {getCellNum,isPlayable, getElement, reset, gameOver,select}
 }
 document.querySelectorAll(".cell").forEach(cellElmt=>{
     cell = cellFactory(cellElmt)
@@ -224,4 +265,3 @@ resetButton.onclick = ()=>{
     cells.forEach(cell=>cell.reset())
 };
 
-agent.pickMove([[1,1,-1],[0,1,0],[-1,-1,0]],PLAYER_X)
