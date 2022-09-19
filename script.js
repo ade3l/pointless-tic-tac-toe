@@ -7,18 +7,24 @@ const player_controller = (()=>{
     const notify =(player,states)=>{
         if(player==PLAYER_X){
             if(!X_human){
-                let move = agent.pickMove(states, PLAYER_X)
-                let pos = move['i']*3+move['j']
-                cells[pos].select()
-                gameBoard.select(pos)
+                //wait for 1 second
+                setTimeout(()=>{
+                    let move = agent.pickMove(states, PLAYER_X)
+                    let pos = move['i']*3+move['j']
+                    cells[pos].select()
+                    gameBoard.select(pos)
+                },1000)
             }
         }
         else{
             if(!Y_human){
-                let move = agent.pickMove(states,player)
-                let pos = move['i']*3+move['j']
-                cells[pos].select()
-                gameBoard.select(pos)
+                //wait for 1 second
+                setTimeout(()=>{
+                    let move = agent.pickMove(states,player)
+                    let pos = move['i']*3+move['j']
+                    cells[pos].select()
+                    gameBoard.select(pos)
+                },1000)
             }
         }
     }
