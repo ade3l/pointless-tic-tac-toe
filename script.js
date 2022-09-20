@@ -13,7 +13,7 @@ const player_controller = (()=>{
                     let pos = move['i']*3+move['j']
                     cells[pos].select()
                     gameBoard.select(pos)
-                },1000)
+                },250)
             }
         }
         else{
@@ -24,7 +24,7 @@ const player_controller = (()=>{
                     let pos = move['i']*3+move['j']
                     cells[pos].select()
                     gameBoard.select(pos)
-                },1000)
+                },500)
             }
         }
     }
@@ -269,5 +269,12 @@ let resetButton = document.querySelector(".reset")
 resetButton.onclick = ()=>{
     gameBoard.reset()
     cells.forEach(cell=>cell.reset())
+    if(!X_human)
+        player_controller.notify(PLAYER_X,[[0,0,0],[0,0,0],[0,0,0]])
+
 };
 
+if(!X_human){
+    console.log("object");
+   player_controller.notify(PLAYER_X,[[0,0,0],[0,0,0],[0,0,0]])
+}
