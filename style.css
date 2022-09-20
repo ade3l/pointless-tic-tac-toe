@@ -96,3 +96,10 @@ select{
 	font-size: large;
 	font-family: 'Orbitron', sans-serif;
 }
+body{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap : 20px;
+}
