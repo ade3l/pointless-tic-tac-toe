@@ -1,8 +1,8 @@
 const grid_side = 3
 const PLAYER_X = 1
 const PLAYER_Y = -1
-var X_human = false
-var Y_human = false
+var X_human = true
+var Y_human = true
 const player_controller = (()=>{
     const notify =(player,states)=>{
         if(player==PLAYER_X){
@@ -277,4 +277,25 @@ resetButton.onclick = ()=>{
 if(!X_human){
     console.log("object");
    player_controller.notify(PLAYER_X,[[0,0,0],[0,0,0],[0,0,0]])
+}
+
+// set up selector for bot and human
+selector_x = document.querySelector("#player_x")
+selector_o = document.querySelector("#player_o")
+// when a new drop down is selected, update the player_controller
+selector_x.onchange = ()=>{
+    X_human = selector_x.value == "human"
+    gameBoard.reset()
+    cells.forEach(cell=>cell.reset())
+    if(!X_human)
+        player_controller.notify(PLAYER_X,[[0,0,0],[0,0,0],[0,0,0]])
+
+    
+}
+selector_o.onchange = ()=>{
+    Y_human = selector_o.value == "human"
+    gameBoard.reset()
+    cells.forEach(cell=>cell.reset())
+    if(!X_human)
+        player_controller.notify(PLAYER_X,[[0,0,0],[0,0,0],[0,0,0]])
 }
