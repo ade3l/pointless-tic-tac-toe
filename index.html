@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Pointless</title>
     <link rel="stylesheet" href="style.css">
     <script src="./script.js" defer></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,15 +14,16 @@
 <body>
     <div class="selector">
         <select name="" id="player_x">
-            <option value="human">Human</option>
+            <option value="human" selected="selected">Human</option>
             <option value="bot">Bot</option>
         </select>
         vs
         <select name="" id="player_o">
             <option value="human">Human</option>
-            <option value="bot">Bot</option>
+            <option value="bot" selected="selected">Bot</option>
         </select>
     </div>
+    <p class = "result"></p>
     <div class="board">
         <div class="row">
             <div class="cell playable" ></div>

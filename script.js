@@ -2,7 +2,7 @@ const grid_side = 3
 const PLAYER_X = 1
 const PLAYER_Y = -1
 var X_human = true
-var Y_human = true
+var O_human = false
 const player_controller = (()=>{
     const notify =(player,states)=>{
         if(player==PLAYER_X){
@@ -17,7 +17,7 @@ const player_controller = (()=>{
             }
         }
         else{
-            if(!Y_human){
+            if(!O_human){
                 //wait for 1 second
                 setTimeout(()=>{
                     let move = agent.pickMove(states,player)
@@ -215,6 +215,14 @@ let gameBoard = (()=>{
                 cell.gameOver()
             })
         }
+        if(_gameOver){
+            if(isTie)
+                document.querySelector(".result").textContent = "Game Tied"
+            else if(_winner == PLAYER_X)
+                document.querySelector(".result").textContent = "Player X Won"
+            else if(_winner == PLAYER_Y)
+                document.querySelector(".result").textContent = "Player O Won"
+        }
     }
     const reset = ()=>{
         _gameOver = false
@@ -258,7 +266,11 @@ const cellFactory = (element)=> {
         _playable = false
         _element.classList.remove('playable');
     }
-    return {getCellNum,isPlayable, getElement, reset, gameOver,select}
+    this.setPlayable = (value)=>{
+        _playable = value
+        _element.classList.remove('playable');
+    }
+    return {getCellNum,isPlayable, getElement, reset, gameOver,select,setPlayable}
 }
 document.querySelectorAll(".cell").forEach(cellElmt=>{
     cell = cellFactory(cellElmt)
@@ -267,6 +279,7 @@ document.querySelectorAll(".cell").forEach(cellElmt=>{
 
 let resetButton = document.querySelector(".reset")
 resetButton.onclick = ()=>{
+    document.querySelector(".result").textContent = " "
     gameBoard.reset()
     cells.forEach(cell=>cell.reset())
     if(!X_human)
@@ -276,14 +289,23 @@ resetButton.onclick = ()=>{
 
 if(!X_human){
     console.log("object");
-   player_controller.notify(PLAYER_X,[[0,0,0],[0,0,0],[0,0,0]])
+    player_controller.notify(PLAYER_X,[[0,0,0],[0,0,0],[0,0,0]])
 }
+if(!X_human && !O_human){
+    //make all the cells unplayable
+    cells.forEach(cell=>{
+        cell.setPlayable(false)
+    })
+}
+
+
 
 // set up selector for bot and human
 selector_x = document.querySelector("#player_x")
 selector_o = document.querySelector("#player_o")
 // when a new drop down is selected, update the player_controller
 selector_x.onchange = ()=>{
+    document.querySelector(".result").textContent = " "
     X_human = selector_x.value == "human"
     gameBoard.reset()
     cells.forEach(cell=>cell.reset())
@@ -293,7 +315,8 @@ selector_x.onchange = ()=>{
     
 }
 selector_o.onchange = ()=>{
-    Y_human = selector_o.value == "human"
+    document.querySelector(".result").textContent = " "
+    O_human = selector_o.value == "human"
     gameBoard.reset()
     cells.forEach(cell=>cell.reset())
     if(!X_human)
